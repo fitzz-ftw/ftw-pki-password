@@ -9,6 +9,14 @@ test environments and manage infrastructure components without
 compromising the host system.
 
 .. toctree::
+   :maxdepth: 1
+   :caption: User Documentation
+
+   user/password_enc
+
+
+
+.. toctree::
    :maxdepth: 2
    :caption: Getting Started:
 

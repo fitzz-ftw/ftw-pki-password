@@ -74,5 +74,4 @@ def get_parser() -> argparse.ArgumentParser:
 
     :return: An initialized ArgumentParser object.
     """
-    cli = PasswordCli()
-    return cli._setup_parser()
+    return PasswordFileParser()

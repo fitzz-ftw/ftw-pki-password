@@ -22,7 +22,7 @@ if not html_baseurl:
 
 
 try:
-    from fitzzftw.devtools._version import __version__
+    from ftwpki.password._version import __version__
     version = __version__
     release = __version__
 except ImportError:
@@ -444,7 +444,7 @@ autosummary_context.update(class_extention_context)
 coverage_statistics_to_stdout = True
 coverage_show_missing_items = True
 coverage_modules = [
-    "fitzzftw.devtools",
+    "ftwpki.password",
 ]
 
 # NOTE - This list uses REGULAR EXPRESSIONS, not shell-style globs.

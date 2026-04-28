@@ -12,8 +12,11 @@ Modul programms documentation
 
 from pathlib import Path
 
+from ftwpki.password.cli_parser import PasswordFileParser
+from ftwpki.password.passwd_file import PasswdFile
 
-def prog_password_enc() -> int:
+
+def prog_password_enc(argv:list[str]| None=None, **kwargs) -> int:
     """
     Main entry point for the password encryption command line interface.
 
@@ -22,10 +25,12 @@ def prog_password_enc() -> int:
 
     :return: Exit code (0 for success, non-zero for errors).
     """
-    cli = PasswordCli()
-    return cli.run()
+    pfp = PasswordFileParser()
+    args = pfp.parse_args(argv) # doctest: +NORMALIZE_WHITESPACE
 
-# Hier den Code einfügen
+    pwd_file = PasswdFile(args, **kwargs)
+    return pwd_file.encrypt()
+
 
 if __name__ == "__main__": # pragma: no cover
     from doctest import FAIL_FAST, testfile

@@ -6,8 +6,7 @@
 programms
 ===============================
 
-
-Modul programms documentation
+Main entry points for the password management tools. (rw)
 """
 
 from pathlib import Path
@@ -16,21 +15,22 @@ from ftwpki.password.cli_parser import PasswordFileParser
 from ftwpki.password.passwd_file import PasswdFile
 
 
-def prog_password_enc(argv:list[str]| None=None, **kwargs) -> int:
+def prog_password_enc(argv: list[str] | None = None, **kwargs) -> int:
     """
-    Main entry point for the password encryption command line interface.
+    Main entry point for the password encryption CLI. (rw)
 
-    This function initializes the PasswordCli, parses arguments,
-    and executes the encryption/decryption logic.
+    Initializes the parser, processes command-line arguments, and
+    executes the interactive encryption logic.
 
-    :return: Exit code (0 for success, non-zero for errors).
+    :param argv: Optional list of command-line arguments.
+    :param kwargs: Additional arguments passed to PasswdFile.
+    :returns: Exit code (0 for success, non-zero for errors).
     """
     pfp = PasswordFileParser()
-    args = pfp.parse_args(argv) # doctest: +NORMALIZE_WHITESPACE
+    args = pfp.parse_args(argv)
 
     pwd_file = PasswdFile(args, **kwargs)
     return pwd_file.encrypt()
-
 
 if __name__ == "__main__": # pragma: no cover
     from doctest import FAIL_FAST, testfile

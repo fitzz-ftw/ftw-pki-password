@@ -1,77 +1,25 @@
-# securify
+# ftw-pki-password
 
-**Secure and robust input handling for Python applications.**
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL_v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
+[![Coverage: 100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#)
 
-`securify` is a lightweight library designed to make user interactions more secure. 
-Its primary goal is to provide reliable ways to capture sensitive information, like 
-passwords, while enforcing strict security constraints.
+A dedicated security tool within the **ftw-pki** suite, designed to manage and encapsulate high-complexity CA passphrases.
 
-## Key Features
+## 🛠 Features
 
-* **Security First:** Enforces interactive terminal (TTY) usage to prevent insecure 
-    input processing.
-* **Bot Protection:** Built-in time delay checks to prevent automated script 
-    attacks.
-* **Double-Entry Verification:** Simple logic to ensure users enter identical 
-    passwords.
-* **Developer Friendly:** Fully type-hinted, 100% test coverage, and clean 
-    exception hierarchies.
+* **Passphrase Transformation:** Converts large-scale passphrase files (e.g., 80+ characters for Root CAs) into secure, encrypted containers.
+* **Multi-Operator Support:** Enables multiple individuals to access a central CA passphrase using their own personal passwords, ensuring accountability and security.
+* **CA Integrity:** Specifically built to meet the requirements of `caroot` (passphrases ~80+ chars) and `intermed` (passphrases ~50+ chars).
+* **Encrypted Storage:** Utilizes specialized modules for the secure storage and handling of sensitive secrets.
 
-## Installation
 
-```bash
-pip install .
-```
+## 📖 Documentation & Usage
 
-## Quick Start
+As this tool directly handles the security of Root and Intermediate CAs, understanding its mechanisms is vital:
 
-The core of the library is the `PasswordDoubleCheck` class. It ensures that a 
-password is typed correctly twice and that the user is actually sitting at a 
-terminal.
+* **CLI Interface:** Provides an intuitive command-line interface. Use `--help` after installation to see available commands and options.
+* **Technical Details:** Full documentation regarding encryption logic and role separation is available in the `doc/source/` directory and can be built via Sphinx.
 
-```python
-from securify.input.password import PasswordDoubleCheck
-from securify.input.exceptions import PasswordError
-
-# Initialize with a 1.5-second minimum delay
-checker = PasswordDoubleCheck(min_delay=1.5)
-
-try:
-    password = checker()
-    print("Password successfully verified!")
-except PasswordError as e:
-    # Handles Mismatch, Speed, or Terminal errors
-    print(f"Verification failed: {e}")
-```
-
-## Technical Background: Why TTY?
-
-By default, `securify` rejects input that does not come from a real terminal. This 
-ensures that the tool **only processes input from a secure, interactive source**. 
-
-If the input is provided through a pipe or another non-interactive process, the 
-checker will reject the operation. This prevents the application from being used in 
-insecure workflows where passwords might be handled through unsafe channels.
-
-## Development
-
-`securify` is built with a focus on stability and cross-version compatibility. It 
-is tested against Python 3.11 up to 3.15-alpha.
-
-### Running Tests
-We use `tox` to manage environments and `pytest` for testing:
-
-```bash
-tox
-```
-
-### Building Documentation
-The documentation is built with Sphinx:
-
-```bash
-cd doc
-make html
-```
-
-## License
-LGPLv2 or above.
+---
+© 2026 ftw-pki Contributors

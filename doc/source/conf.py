@@ -214,7 +214,7 @@ def setup(app):
 
 
 # -- Project information -----------------------------------------------------
-project = "ftw-devtools"
+project = "ftw-pki-password"
 copyright = "2026, Fitzz TeΧnik Welt"
 author = "Fitzz TeΧnik Welt"
 html_show_copyright = True
@@ -452,8 +452,6 @@ coverage_modules = [
 # Remember to escape dots (e.g., '\.') if you want to match a literal dot.
 coverage_ignore_modules = [
     r".*_version",
-    r".*converter.*",
-    r".*caroot.*",
 ]
 
 # -- Options for (Python) domain

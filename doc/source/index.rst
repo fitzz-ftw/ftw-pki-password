@@ -12,7 +12,7 @@ compromising the host system.
    :maxdepth: 1
    :caption: User Documentation
 
-   user/password_enc
+   user/cli_password_enc
 
 
 

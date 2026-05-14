@@ -6,8 +6,8 @@
 passwd_file
 ===============================
 
-
-Modul passwd_file documentation
+High-level interface for creating encrypted password files with
+interactive user input. (rw)
 """
 
 import sys
@@ -24,7 +24,15 @@ from ftwpki.baselibs.passwd import PasswordManager
 from ftwpki.password.protocols import PasswordFileProtocol
 
 
+# CLASS - PasswdFile
 class PasswdFile:
+    """
+    Handler for interactive password file encryption. (rw)
+
+    This class coordinates the user input via PasswordDoubleCheck and
+    uses the PasswordManager to encrypt the provided secrets.
+    """
+
     def __init__(
         self,
         args: PasswordFileProtocol,
@@ -36,6 +44,17 @@ class PasswdFile:
         prompt2: str = "",
         **kwargs,
     ) -> None:
+        """
+        Initialize the encryption handler and password prompter. (rw)
+
+        :param args: Object adhering to PasswordFileProtocol containing paths.
+        :param tries_by_mismatch: Number of allowed retries on wrong confirmation.
+        :param min_delay: Minimum time between password attempts.
+        :param require_terminal: If True, ensures input comes from a TTY.
+        :param prompt1: Custom primary password prompt string.
+        :param prompt2: Custom confirmation prompt string.
+        :param kwargs: Additional arguments like 'pwcall' for automated input.
+        """
         pwcall: Callable[[str], str] = kwargs.pop("pwcall", None)
         self._args = args
         self._pm = PasswordManager(private_dir=args.outdir)
@@ -50,13 +69,21 @@ class PasswdFile:
 
     def __repr__(self) -> str:
         """
-        Return the canonical string representation.
+        Return the canonical string representation. (rw)
 
-        :returns: String containing the class name.
+        :returns: String representation of the class instance.
         """
         return f"{self.__class__.__name__}()"
 
     def _getpassword(self, prompt1: str = "", prompt2: str = "") -> str:
+        """
+        Collect password from user with optional retry on mismatch. (ro)
+
+        :param prompt1: Primary password prompt.
+        :param prompt2: Confirmation password prompt.
+        :returns: The validated password string.
+        :raises PasswordMismatchError: If the maximum number of retries is exceeded.
+        """
         current_try: int = 0
         while not self._password.is_valid or current_try <= self._tries_by_mismatch:
             current_try += 1
@@ -71,12 +98,10 @@ class PasswdFile:
 
     def encrypt(self) -> int:
         """
-        Execute the encryption process.
+        Execute the encryption process and write to disk. (rw)
 
-        :param args_list: Command line arguments.
-        :returns: Exit code (0 for success, 1 for error).
+        :returns: Exit code (0: Success, 1: Failure, 2: Missing Password).
         """
-
         try:
             password = self._getpassword(
                 f"Password for '{self._args.target_file}': ", "Retype password: "
@@ -102,6 +127,9 @@ class PasswdFile:
         except Exception as err:
             print(f"Error: {err}", file=sys.stderr)
             return 1
+
+
+# !CLASS - PasswdFile
 
 
 if __name__ == "__main__":  # pragma: no cover

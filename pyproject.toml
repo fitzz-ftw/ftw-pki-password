@@ -72,8 +72,6 @@ dev = ["ftw-pki-password[test,doc,lint]", "esbonio==0.16.5"]
 lint = ["ruff"]
 test = ["pytest", "pytest-mock", "pytest-cov", "ftw-devtools"]
 
-gh=["ftw-pki-libs @ git+https://github.com/fitzz-ftw/ftw-pki-libs.git@development",
-  "ftw-pki-password[dev]"]
 
 [[project.authors]]
 email = "FitzzTeXnikWelt@t-online.de"

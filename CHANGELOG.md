@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.3a3] - 2026-05-18
+
+### Removed
+- Remove the deprecated `pwcall` keyword argument and its internal processing from the `PasswdFile` constructor.
+
+### Changed
+- Shift password testing strategy in doctests (`get_started_passwd_file.rst`, `get_started_programms.rst`) from argument injection to direct monkeypatching of standard `getpass.getpass`.
+- Clean up the Sphinx configuration (`conf.py`) by removing the unused `platformdirs` intersphinx mapping.
+- Switch from internal `securify` type mappings to standard library `collections.abc.Callable` types.
+
+---
+
+## [0.0.3a1] - 2026-05-17
+### Added
+- Integrated `ftw-securify` for protected password input via TTY.
+- Major documentation refactor to support the updated package structure.
+
+
 ## [0.0.3a1] - Unreleased
 ### Added
 - Integrated `ftw-securify` for protected password input via TTY.

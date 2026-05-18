@@ -11,6 +11,7 @@ interactive user input. (rw)
 """
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 from securify.input.exceptions import (
@@ -18,7 +19,7 @@ from securify.input.exceptions import (
     PasswordSpeedError,
     PasswordTerminalError,
 )
-from securify.input.password import Callable, PasswordDoubleCheck
+from securify.input.password import PasswordDoubleCheck
 
 from ftwpki.baselibs.passwd import PasswordManager
 from ftwpki.password.protocols import PasswordFileProtocol
@@ -55,7 +56,6 @@ class PasswdFile:
         :param prompt2: Custom confirmation prompt string.
         :param kwargs: Additional arguments like 'pwcall' for automated input.
         """
-        pwcall: Callable[[str], str] = kwargs.pop("pwcall", None)
         self._args = args
         self._pm = PasswordManager(private_dir=args.outdir)
         self._password = PasswordDoubleCheck(
@@ -63,7 +63,6 @@ class PasswdFile:
             require_terminal=require_terminal,
             prompt1=prompt1,
             prompt2=prompt2,
-            pwcall=pwcall,
         )
         self._tries_by_mismatch = tries_by_mismatch
 

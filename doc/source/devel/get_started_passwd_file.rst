@@ -2,6 +2,7 @@ Password File Class
 #####################
 
 >>> from pathlib import Path
+>>> import getpass
 >>> from fitzzftw.devtools.testinfra import TestHomeEnvironment
 >>> env = TestHomeEnvironment(Path("doc/source/devel/testhome"))
 >>> env.setup()
@@ -50,7 +51,9 @@ PasswdFile()
 
 Initialize the stub passwordgenerator.
 
->>> stubgetpasswd = StubPassword()
+>> stubgetpasswd = StubPassword()
+
+>>> getpass.getpass = StubPassword()
 
 .. note::
    
@@ -59,7 +62,7 @@ Initialize the stub passwordgenerator.
    set ``require_terminal=False``.
 
 
->>> pwd_file_test = PasswdFile(args, require_terminal=False, pwcall=stubgetpasswd)
+>>> pwd_file_test = PasswdFile(args, require_terminal=False)
 
 >>> pwd_file_test.encrypt()
 Password for 'mypasswordfile': 
@@ -88,14 +91,18 @@ Retype password:
 >>> def stubkeyboardinterrupt(obj):
 ...     raise KeyboardInterrupt()
 
->>> pwd_file_test = PasswdFile(args, require_terminal=False, pwcall=stubkeyboardinterrupt)
+>>> getpass.getpass = stubkeyboardinterrupt
+
+>>> pwd_file_test = PasswdFile(args, require_terminal=False)
 >>> pwd_file_test.encrypt()
 1
 
 >>> def stubexception(obj):
 ...     raise Exception("Test Exception!")
 
->>> pwd_file_test = PasswdFile(args, require_terminal=False, pwcall=stubexception)
+>>> getpass.getpass = stubexception
+
+>>> pwd_file_test = PasswdFile(args, require_terminal=False)
 >>> pwd_file_test.encrypt()
 1
 

@@ -9,6 +9,8 @@ The Password Programm
 
 >>> import time
 
+>>> import getpass
+
 >>> class StubPassword:
 ...     def __init__(self):
 ...         self.generate = self._generate()
@@ -21,7 +23,8 @@ The Password Programm
 ...         print(prompt, flush=True)
 ...         return next(self.generate)
 
->>> stubpwinput = StubPassword()
+
+>>> getpass.getpass= StubPassword()
 
 >>> sys_argv = ["mypasswordfile",]
 
@@ -31,17 +34,18 @@ The Password Programm
 >>> args = pfp.parse_args(sys_argv) # doctest: +NORMALIZE_WHITESPACE
 
 >>> from ftwpki.password.passwd_file import PasswdFile
->>> pwd_file = PasswdFile(args, require_terminal=False, pwcall=stubpwinput)
+>>> pwd_file = PasswdFile(args, require_terminal=False)
 
 >>> pwd_file.encrypt()
 Password for 'mypasswordfile': 
 Retype password: 
 0
 
->>> from ftwpki.password.programms import prog_password_enc
->>> stubpwinput = StubPassword()
+>>> getpass.getpass = StubPassword()
 
->>> prog_password_enc(sys_argv, require_terminal=False, pwcall=stubpwinput)
+>>> from ftwpki.password.programms import prog_password_enc
+
+>>> prog_password_enc(sys_argv, require_terminal=False)
 Password for 'mypasswordfile': 
 Retype password: 
 0

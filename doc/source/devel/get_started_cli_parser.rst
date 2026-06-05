@@ -9,7 +9,7 @@ Password
 >>> pfp # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 PasswordFileParser(prog='...', 
     usage=None, 
-    description='Encrypt a passphrase file into the private directory.', 
+    description='Encrypt a passphrase file into the out directory.', 
     formatter_class=<class 'argparse.HelpFormatter'>, 
     conflict_handler='error', 
     add_help=True)
@@ -23,7 +23,16 @@ Namespace(target_file='mypasswordfile',
 >>> get_parser() # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 PasswordFileParser(prog=..., 
     usage=None, 
-    description='Encrypt a passphrase file into the private directory.', 
+    description='Encrypt a passphrase file into the out directory.', 
+    formatter_class=<class 'argparse.HelpFormatter'>, 
+    conflict_handler='error', 
+    add_help=True)
+
+>>> pfp = PasswordFileParser(run_setup=False)
+>>> pfp # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+PasswordFileParser(prog='pytest', 
+    usage=None, 
+    description='Encrypt a passphrase file into the out directory.', 
     formatter_class=<class 'argparse.HelpFormatter'>, 
     conflict_handler='error', 
     add_help=True)

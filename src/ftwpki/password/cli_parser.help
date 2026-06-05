@@ -1,0 +1,7 @@
+[passwordfile]
+[passwordfile.passphrase_file]
+en = "Source file containing the passphrase to be encrypted (default: %(default)s)."
+[passwordfile.outdir]
+en = "Target directory where the encrypted file will be stored (default: %(default)s)."
+[passwordfile.target_file]
+en = "Name of the final encrypted output file (default: %(default)s)."

@@ -12,14 +12,22 @@ encryption tool, mapping arguments to the PasswordFileProtocol. (rw)
 
 import argparse
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
-from ftwpki.baselibs.cli_parser import ArgparseFix311
+from ftwpki.baselibs.cli_parser import ArgparseFix311, AutoHelpParserMixin, load_help_entries
 from ftwpki.password.protocols import PasswordFileProtocol
+
+_HELP: dict[str, Any] = {}
+HELP_FILE = Path(__file__).parent.joinpath("cli_parser.help")
+
+load_help_entries(_HELP,HELP_FILE)
+
+
+LANG = "en"
 
 
 # CLASS - PasswordFileParser
-class PasswordFileParser(ArgparseFix311):
+class PasswordFileParser(AutoHelpParserMixin, ArgparseFix311):
     """
     CLI for encrypting password files using the PasswordManager. (rw)
 
@@ -32,6 +40,7 @@ class PasswordFileParser(ArgparseFix311):
         prog: str | None = None,
         usage: str | None = None,
         description: str | None = None,
+        run_setup:bool = True,
         exit_on_error: bool = False,
         **kwargs,
     ) -> None:
@@ -39,10 +48,18 @@ class PasswordFileParser(ArgparseFix311):
         Initialize the parser with a default or custom description. (rw)
         """
         description = (
-            description if description else "Encrypt a passphrase file into the private directory."
+            description if description else "Encrypt a passphrase file into the out directory."
         )
-        super().__init__(prog, usage, description, exit_on_error=exit_on_error, **kwargs)
-        self._setup_parser()
+        self._preparser: bool = not kwargs.get("add_help", True)
+        args = [
+            prog,
+            usage,
+            description,
+        ]
+        kwargs["exit_on_error"] = exit_on_error
+        super().__init__(*args, help_id="passwordfile", help_entries=_HELP, **kwargs)
+        if run_setup:
+            self._setup_parser()
 
     def _setup_parser(self) -> None:
         """
@@ -57,7 +74,7 @@ class PasswordFileParser(ArgparseFix311):
             "--passphrase-file",
             dest="passphrase_file",
             default="password.txt",
-            help="Source file containing the passphrase (default: password.txt)",
+            help=self._help("passphrase_file"), 
         )
 
         self.add_argument(
@@ -65,7 +82,9 @@ class PasswordFileParser(ArgparseFix311):
             "--outdir",
             dest="outdir",
             default=".private",
-            help="Target directory for encrypted files (default: .private)",
+            help=self._help(
+                "outdir"
+            ),  # "Target directory for encrypted files (default: .private)",
         )
 
     def parse_args(
@@ -106,24 +125,39 @@ if __name__ == "__main__":  # pragma: no cover
     option_flags = FAIL_FAST
     test_sum = 0
     test_failed = 0
+    passed_files = 0
 
     # Pfad zu den dokumentierenden Tests
     testfiles_dir = Path(__file__).parents[3] / "doc/source/devel"
-    test_file = testfiles_dir / "get_started_cli_parser.rst"
 
-    if test_file.exists():
-        print(f"--- Running Doctest for {test_file.name} ---")
-        doctestresult = testfile(
-            str(test_file),
-            module_relative=False,
-            verbose=be_verbose,
-            optionflags=option_flags,
-        )
-        test_failed += doctestresult.failed
-        test_sum += doctestresult.attempted
-        if test_failed == 0:
-            print(f"\nDocTests passed without errors, {test_sum} tests.")
+    test_files = [
+        # "test_new_parser.rst",
+        "get_started_cli_parser.rst",
+    ]
+    for file in test_files:
+        test_file = testfiles_dir / file
+        if test_file.exists():
+            print(f"--- Running Doctest for {test_file.name} ---")
+            doctestresult = testfile(
+                str(test_file),
+                module_relative=False,
+                verbose=be_verbose,
+                optionflags=option_flags,
+            )
+            test_failed += doctestresult.failed
+            test_sum += doctestresult.attempted
+            if doctestresult.failed > 0 and option_flags & FAIL_FAST:
+                print(f"Doctest result for {test_file.name}: {doctestresult}")
+                print(
+                    f"\nKeep going! You already passed {passed_files} files "
+                    f"with {test_sum} tests before this hit."
+                )
+                break  # Stop on first failure if FAIL_FAST is set
+            passed_files += 1
         else:
-            print(f"\nDocTests failed: {test_failed} tests.")
+            print(f"⚠️ Warning: Test file {test_file.name} not found.")
+    if test_failed == 0:
+        print(f"\nDocTests passed without errors, {test_sum} tests.")
     else:
-        print(f"⚠️ Warning: Test file {test_file.name} not found.")
+        if not option_flags & FAIL_FAST:
+            print(f"\nDocTests failed: {test_failed} tests out of {test_sum}.")

@@ -1,38 +1,42 @@
 Password
 =========
 
+>>> import sys
 
+>>> from ftwpki.password.cli_parser import password_parser, PasswordFileArguments
 
->>> from ftwpki.password.cli_parser import PasswordFileParser
+>>> pwargs = PasswordFileArguments()
 
->>> pfp = PasswordFileParser()
+>>> pwargs
+PasswordFileArguments(outdir=''
+passphrase_file=''
+target_file='')
+
+>>> pwargs.setup_args()
+
+>>> pfp = password_parser()
+
 >>> pfp # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-PasswordFileParser(prog='...', 
+PKIBaseParser(prog='...', 
     usage=None, 
-    description='Encrypt a passphrase file into the out directory.', 
+    description=None, 
     formatter_class=<class 'argparse.HelpFormatter'>, 
     conflict_handler='error', 
     add_help=True)
+
+>>> pfp.print_help(file=sys.stderr)
 
 >>> pfp.parse_args(["mypasswordfile"]) # doctest: +NORMALIZE_WHITESPACE
-Namespace(target_file='mypasswordfile', 
-    passphrase_file='password.txt', 
-    outdir='.private')
+PasswordFileArguments(outdir='.private'
+    passphrase_file='password.txt'
+    target_file='mypasswordfile')
 
->>> from ftwpki.password.cli_parser import get_parser
->>> get_parser() # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-PasswordFileParser(prog=..., 
-    usage=None, 
-    description='Encrypt a passphrase file into the out directory.', 
-    formatter_class=<class 'argparse.HelpFormatter'>, 
-    conflict_handler='error', 
-    add_help=True)
+>>> pfp.parse_args(["mypasswordfile"], namespace=PasswordFileArguments()) # doctest: +NORMALIZE_WHITESPACE
+PasswordFileArguments(outdir='.private'
+    passphrase_file='password.txt'
+    target_file='mypasswordfile')
 
->>> pfp = PasswordFileParser(run_setup=False)
->>> pfp # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-PasswordFileParser(prog='pytest', 
-    usage=None, 
-    description='Encrypt a passphrase file into the out directory.', 
-    formatter_class=<class 'argparse.HelpFormatter'>, 
-    conflict_handler='error', 
-    add_help=True)
+>>> pfp = password_parser(pre_parser=True)
+
+
+

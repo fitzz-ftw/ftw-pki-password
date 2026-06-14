@@ -11,7 +11,7 @@ Main entry points for the password management tools. (rw)
 
 from pathlib import Path
 
-from ftwpki.password.cli_parser import PasswordFileParser
+from ftwpki.password.cli_parser import password_parser
 from ftwpki.password.passwd_file import PasswdFile
 
 
@@ -26,7 +26,7 @@ def prog_password_enc(argv: list[str] | None = None, **kwargs) -> int:
     :param kwargs: Additional arguments passed to PasswdFile.
     :returns: Exit code (0 for success, non-zero for errors).
     """
-    pfp = PasswordFileParser()
+    pfp = password_parser()
     args = pfp.parse_args(argv)
 
     pwd_file = PasswdFile(args, **kwargs)

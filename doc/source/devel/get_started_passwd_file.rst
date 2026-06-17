@@ -9,9 +9,9 @@ Password File Class
 >>> _ = env.copy2cwd("password.txt")
 
 >>> from ftwpki.password.passwd_file import PasswdFile
->>> from ftwpki.password.cli_parser import PasswordFileParser
+>>> from ftwpki.password.cli_parser import  password_parser
 
->>> pfp = PasswordFileParser()
+>>> pfp =  password_parser()
 >>> args = pfp.parse_args(["mypasswordfile"]) # doctest: +NORMALIZE_WHITESPACE
 
 

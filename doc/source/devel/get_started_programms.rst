@@ -28,9 +28,9 @@ The Password Programm
 
 >>> sys_argv = ["mypasswordfile",]
 
->>> from ftwpki.password.cli_parser import PasswordFileParser
+>>> from ftwpki.password.cli_parser import  password_parser
 
->>> pfp = PasswordFileParser()
+>>> pfp =  password_parser()
 >>> args = pfp.parse_args(sys_argv) # doctest: +NORMALIZE_WHITESPACE
 
 >>> from ftwpki.password.passwd_file import PasswdFile

@@ -12,89 +12,58 @@ encryption tool, mapping arguments to the PasswordFileProtocol. (rw)
 
 import argparse
 from pathlib import Path
-from typing import cast
+from typing import Any
 
-from ftwpki.baselibs.cli_parser import ArgparseFix311
-from ftwpki.password.protocols import PasswordFileProtocol
+from ftwpki.baselibs._cli_parser import (
+    _HELP,
+    ArgparseFix311,
+    BaseArguments,
+    load_help_entries,
+    parser_factory_creator,
+)
 
+HELP_FILE = Path(__file__).parent.joinpath("cli_parser.help")
 
-# CLASS - PasswordFileParser
-class PasswordFileParser(ArgparseFix311):
-    """
-    CLI for encrypting password files using the PasswordManager. (rw)
+# print(_HELP)
 
-    Provides a parser to handle target filenames, source passphrase files,
-    and output directories.
-    """
-
-    def __init__(
-        self,
-        prog: str | None = None,
-        usage: str | None = None,
-        description: str | None = None,
-        exit_on_error: bool = False,
-        **kwargs,
-    ) -> None:
-        """
-        Initialize the parser with a default or custom description. (rw)
-        """
-        description = (
-            description if description else "Encrypt a passphrase file into the private directory."
-        )
-        super().__init__(prog, usage, description, exit_on_error=exit_on_error, **kwargs)
-        self._setup_parser()
-
-    def _setup_parser(self) -> None:
-        """
-        Configure the argument parser for target, source, and output directory. (ro)
-
-        Sets up the positional and optional arguments for the CLI.
-        """
-        self.add_argument("target_file", help="Name of the encrypted output file")
-
-        self.add_argument(
-            "-p",
-            "--passphrase-file",
-            dest="passphrase_file",
-            default="password.txt",
-            help="Source file containing the passphrase (default: password.txt)",
-        )
-
-        self.add_argument(
-            "-o",
-            "--outdir",
-            dest="outdir",
-            default=".private",
-            help="Target directory for encrypted files (default: .private)",
-        )
-
-    def parse_args(
-        self, args: list[str] | None = None, namespace: argparse.Namespace | None = None
-    ) -> PasswordFileProtocol:
-        """
-        Parse command-line arguments and cast to PasswordFileProtocol. (ro)
-
-        :param args: List of argument strings.
-        :param namespace: Existing namespace to populate.
-        :returns: Parsed arguments adhering to PasswordFileProtocol.
-        """
-        return cast(PasswordFileProtocol, super().parse_args(args, namespace))
+load_help_entries(_HELP,HELP_FILE)
 
 
-# !CLASS - PasswordFileParser
+LANG = "en"
 
 
-def get_parser() -> argparse.ArgumentParser:
-    """
-    Get the argument parser for the password encryption tool. (ro)
+# CLASS - PasswordFileArguments
+class PasswordFileArguments(BaseArguments):
+    __slots__=["target_file", 
+               "passphrase_file", 
+               "outdir"]
+    helpid: list[str] = ["passwordfile"]
+    arg_data = {
+        "target_file": {"flags": [], "kws": {}, "pre": {"nargs": "?"}},
+        "passphrase_file": {
+            "flags": ["-p", "--passphrase-file"],
+            "kws": {
+                "default": "password.txt",
+            },
+            "pre": {},
+        },
+        "outdir": {"flags": ["-o", "--outdir"], 
+                    "kws": {"default":".private"}, 
+                    "pre": {}},
+    }
 
-    This function is used by Sphinx-argparse to automatically generate
-    the CLI documentation.
+    def __init__(self) -> None:
+        super().__init__()
+        self.target_file: str = ""
+        self.passphrase_file: str = ""
+        self.outdir: str = ""
 
-    :returns: An initialized ArgumentParser object.
-    """
-    parser = PasswordFileParser()
-    return parser
+
+# !CLASS - PasswordFileArguments
+
+
+password_parser = parser_factory_creator(PasswordFileArguments)
+
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -106,24 +75,39 @@ if __name__ == "__main__":  # pragma: no cover
     option_flags = FAIL_FAST
     test_sum = 0
     test_failed = 0
+    passed_files = 0
 
     # Pfad zu den dokumentierenden Tests
     testfiles_dir = Path(__file__).parents[3] / "doc/source/devel"
-    test_file = testfiles_dir / "get_started_cli_parser.rst"
 
-    if test_file.exists():
-        print(f"--- Running Doctest for {test_file.name} ---")
-        doctestresult = testfile(
-            str(test_file),
-            module_relative=False,
-            verbose=be_verbose,
-            optionflags=option_flags,
-        )
-        test_failed += doctestresult.failed
-        test_sum += doctestresult.attempted
-        if test_failed == 0:
-            print(f"\nDocTests passed without errors, {test_sum} tests.")
+    test_files = [
+        # "test_new_parser.rst",
+        "get_started_cli_parser.rst",
+    ]
+    for file in test_files:
+        test_file = testfiles_dir / file
+        if test_file.exists():
+            print(f"--- Running Doctest for {test_file.name} ---")
+            doctestresult = testfile(
+                str(test_file),
+                module_relative=False,
+                verbose=be_verbose,
+                optionflags=option_flags,
+            )
+            test_failed += doctestresult.failed
+            test_sum += doctestresult.attempted
+            if doctestresult.failed > 0 and option_flags & FAIL_FAST:
+                print(f"Doctest result for {test_file.name}: {doctestresult}")
+                print(
+                    f"\nKeep going! You already passed {passed_files} files "
+                    f"with {test_sum} tests before this hit."
+                )
+                break  # Stop on first failure if FAIL_FAST is set
+            passed_files += 1
         else:
-            print(f"\nDocTests failed: {test_failed} tests.")
+            print(f"⚠️ Warning: Test file {test_file.name} not found.")
+    if test_failed == 0:
+        print(f"\nDocTests passed without errors, {test_sum} tests.")
     else:
-        print(f"⚠️ Warning: Test file {test_file.name} not found.")
+        if not option_flags & FAIL_FAST:
+            print(f"\nDocTests failed: {test_failed} tests out of {test_sum}.")

@@ -3,6 +3,6 @@ Password Encription
 
 .. argparse::
    :module: ftwpki.password.cli_parser 
-   :func: get_parser
+   :func: password_parser
    :prog: ftwpkipassword
 

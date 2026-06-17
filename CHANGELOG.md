@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+###### [0.0.4] - 2026-06-17
+
+###### Changed
+- Migrate CLI parser to factory pattern
+
+###### Fixed
+- Integrate help system in CLI parser
+
+###### Testing
+- Enhance test infrastructure for CLI parser components
+
+###### Documentation
+- Update CLI parser references in documentation
+
+
 ## [0.0.3a3] - 2026-05-18
 
 ### Removed
